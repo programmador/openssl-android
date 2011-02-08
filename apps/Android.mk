@@ -56,9 +56,9 @@ local_shared_libraries := \
 	libssl \
 	libcrypto
 
-local_c_includes := \
-	external/openssl \
-	external/openssl/include
+LOCAL_C_INCLUDES := \
+	$(NDK_PROJECT_PATH) \
+	$(NDK_PROJECT_PATH)/include
 
 local_cflags := -DMONOLITH
 
