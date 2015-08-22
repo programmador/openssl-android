@@ -22,8 +22,12 @@ Finished message even when negotiating full-handshakes.  With this patch,
 clients can negotiate SSL connections in 1-RTT even when performing
 full-handshakes.
 
+
 jsse.patch
 
 Support for JSSE implementation based on OpenSSL.
 
 
+lower_android_api_version
+
+Support building for android android-7 (2.1) or maybe (not tested) even android-5 (2.0) targets.

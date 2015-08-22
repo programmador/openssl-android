@@ -70,6 +70,20 @@
 #include "cryptlib.h"
 #include <openssl/dso.h>
 
+#ifdef ANDROID5
+    typedef struct {
+        const char *dli_fname;  /* Pathname of shared object that
+                                   contains address */
+        void       *dli_fbase;  /* Address at which shared object
+                                   is loaded */
+        const char *dli_sname;  /* Name of nearest symbol with address
+                                   lower than addr */
+        void       *dli_saddr;  /* Exact address of symbol named
+                                   in dli_sname */
+    } Dl_info;
+    int dladdr(const void *addr, Dl_info *info) { return 0; }
+#endif
+
 #ifndef DSO_DLFCN
 DSO_METHOD *DSO_METHOD_dlfcn(void)
 	{
