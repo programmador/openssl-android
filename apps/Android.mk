@@ -52,9 +52,11 @@ local_src_files:= \
 	version.c \
 	x509.c
 
-local_shared_libraries := \
-	libssl \
-	libcrypto
+#   cms.c ec.c s_server.c
+
+LOCAL_SHARED_LIBRARIES := \
+	libsslx \
+	libcryptox
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/.. \
