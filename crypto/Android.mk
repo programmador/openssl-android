@@ -492,11 +492,11 @@ local_src_files := \
 	x509v3/v3err.c
 
 local_c_includes := \
-	$(NDK_PROJECT_PATH) \
-	$(NDK_PROJECT_PATH)/crypto/asn1 \
-	$(NDK_PROJECT_PATH)/crypto/evp \
-	$(NDK_PROJECT_PATH)/include \
-	$(NDK_PROJECT_PATH)/include/openssl
+	$(LOCAL_PATH)/.. \
+	$(LOCAL_PATH)/asn1 \
+	$(LOCAL_PATH)/evp \
+	$(LOCAL_PATH)/../include \
+	$(LOCAL_PATH)/../include/openssl
 
 local_c_flags := -DNO_WINDOWS_BRAINDEATH
 

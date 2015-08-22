@@ -1,9 +1,9 @@
 LOCAL_PATH:= $(call my-dir)
 
 local_c_includes := \
-	$(NDK_PROJECT_PATH) \
-	$(NDK_PROJECT_PATH)/include \
-	$(NDK_PROJECT_PATH)/crypto
+	$(LOCAL_PATH)/.. \
+	$(LOCAL_PATH)/../include \
+	$(LOCAL_PATH)/../crypto
 
 local_src_files:= \
 	s2_meth.c \
