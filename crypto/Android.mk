@@ -500,6 +500,25 @@ local_c_includes := \
 
 local_c_flags := -DNO_WINDOWS_BRAINDEATH
 
+# SPECIAL CASES:
+# 1) android-6 and android-7 are the same thing as android-5
+# 2) android-10 .. 13 is the same thing as android-9
+#
+DETECTED_PLATFORM = $(TARGET_PLATFORM)
+APP_PLATFORM_LEVEL := $(strip $(subst android-,,$(TARGET_PLATFORM)))
+ifneq (,$(filter 6 7,$(APP_PLATFORM_LEVEL)))
+    DETECTED_PLATFORM := android-5
+    $(warning  Adjusting APP_PLATFORM android-$(APP_PLATFORM_LEVEL) to $(DETECTED_PLATFORM))
+endif
+ifneq (,$(filter 10 11 12 13,$(APP_PLATFORM_LEVEL)))
+    DETECTED_PLATFORM := android-9
+    $(warning Adjusting APP_PLATFORM android-$(APP_PLATFORM_LEVEL) to $(DETECTED_PLATFORM))
+endif
+
+ifeq ($(DETECTED_PLATFORM),android-5)
+    local_c_flags += -DANDROID5
+endif
+
 #######################################
 # target static library
 include $(CLEAR_VARS)
