@@ -135,11 +135,11 @@ function import() {
   cp ../patches/ssl_Android.mk ssl/Android.mk
 
   # Generate asm
-  perl crypto/aes/asm/aes-armv4.pl         > crypto/aes/asm/aes-armv4.s
-  perl crypto/bn/asm/armv4-mont.pl         > crypto/bn/asm/armv4-mont.s
-  perl crypto/sha/asm/sha1-armv4-large.pl  > crypto/sha/asm/sha1-armv4-large.s
-  perl crypto/sha/asm/sha256-armv4.pl      > crypto/sha/asm/sha256-armv4.s
-  perl crypto/sha/asm/sha512-armv4.pl      > crypto/sha/asm/sha512-armv4.s
+  perl crypto/aes/asm/aes-armv4.pl         > crypto/aes/asm/aes-armv4.S
+  perl crypto/bn/asm/armv4-mont.pl         > crypto/bn/asm/armv4-mont.S
+  perl crypto/sha/asm/sha1-armv4-large.pl  > crypto/sha/asm/sha1-armv4-large.S
+  perl crypto/sha/asm/sha256-armv4.pl      > crypto/sha/asm/sha256-armv4.S
+  perl crypto/sha/asm/sha512-armv4.pl      > crypto/sha/asm/sha512-armv4.S
 
   # Setup android.testssl directory
   mkdir android.testssl
