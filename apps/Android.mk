@@ -52,8 +52,6 @@ local_src_files:= \
 	version.c \
 	x509.c
 
-#   cms.c ec.c s_server.c
-
 LOCAL_SHARED_LIBRARIES := \
 	libsslx \
 	libcryptox

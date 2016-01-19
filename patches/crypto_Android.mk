@@ -563,7 +563,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_MODULE:= libcryptox
     include $(BUILD_SHARED_LIBRARY)
 endif
-=======
 
 ########################################
 # host static library, which is used by some SDK tools.
