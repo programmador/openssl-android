@@ -141,6 +141,11 @@ function import() {
   perl crypto/sha/asm/sha256-armv4.pl      > crypto/sha/asm/sha256-armv4.S
   perl crypto/sha/asm/sha512-armv4.pl      > crypto/sha/asm/sha512-armv4.S
 
+  # Rename .s files to .S since capital .S means that it needs to be pre-processed
+  mv crypto/bn/asm/mips3.s crypto/bn/asm/mips3.S
+  mv crypto/bn/asm/pa-risc2.s crypto/bn/asm/pa-risc2.S
+  mv crypto/bn/asm/pa-risc2W.s crypto/bn/asm/pa-risc2W.S
+
   # Setup android.testssl directory
   mkdir android.testssl
   cat test/testssl | \
