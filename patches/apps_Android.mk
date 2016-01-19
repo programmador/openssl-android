@@ -56,12 +56,12 @@ LOCAL_SRC_FILES:= \
 #   cms.c ec.c s_server.c
 
 LOCAL_SHARED_LIBRARIES := \
-	libssl \
-	libcrypto 
+	libsslx \
+	libcryptox
 
 LOCAL_C_INCLUDES := \
-	external/openssl \
-	external/openssl/include
+	$(LOCAL_PATH)/.. \
+	$(LOCAL_PATH)/../include \
 
 LOCAL_CFLAGS := -DMONOLITH
 
