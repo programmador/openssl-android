@@ -109,7 +109,7 @@
  *
  */
 
-#ifndef _POSIX_C_SOURCE
+#if !defined(_POSIX_C_SOURCE) && defined(OPENSSL_SYS_VMS)
 #define _POSIX_C_SOURCE 2	/* On VMS, you need to define this to get
 				   the declaration of fileno().  The value
 				   2 is to make sure no function defined
@@ -257,6 +257,8 @@ int args_from_file(char *file, int *argc, char **argv[])
 
 int str2fmt(char *s)
 	{
+	if (s == NULL)
+		return FORMAT_UNDEF;
 	if 	((*s == 'D') || (*s == 'd'))
 		return(FORMAT_ASN1);
 	else if ((*s == 'T') || (*s == 't'))
@@ -377,13 +379,12 @@ void program_name(char *in, char *out, int size)
 
 int chopup_args(ARGS *arg, char *buf, int *argc, char **argv[])
 	{
-	int num,len,i;
+	int num,i;
 	char *p;
 
 	*argc=0;
 	*argv=NULL;
 
-	len=strlen(buf);
 	i=0;
 	if (arg->count == 0)
 		{
@@ -797,7 +798,9 @@ X509 *load_cert(BIO *err, const char *file, int format,
 	if (file == NULL)
 		{
 #ifdef _IONBF
+# ifndef OPENSSL_NO_SETVBUF_IONBF
 		setvbuf(stdin, NULL, _IONBF, 0);
+# endif /* ndef OPENSSL_NO_SETVBUF_IONBF */
 #endif
 		BIO_set_fp(cert,stdin,BIO_NOCLOSE);
 		}
@@ -898,7 +901,9 @@ EVP_PKEY *load_key(BIO *err, const char *file, int format, int maybe_stdin,
 	if (file == NULL && maybe_stdin)
 		{
 #ifdef _IONBF
+# ifndef OPENSSL_NO_SETVBUF_IONBF
 		setvbuf(stdin, NULL, _IONBF, 0);
+# endif /* ndef OPENSSL_NO_SETVBUF_IONBF */
 #endif
 		BIO_set_fp(key,stdin,BIO_NOCLOSE);
 		}
@@ -987,7 +992,9 @@ EVP_PKEY *load_pubkey(BIO *err, const char *file, int format, int maybe_stdin,
 	if (file == NULL && maybe_stdin)
 		{
 #ifdef _IONBF
+# ifndef OPENSSL_NO_SETVBUF_IONBF
 		setvbuf(stdin, NULL, _IONBF, 0);
+# endif /* ndef OPENSSL_NO_SETVBUF_IONBF */
 #endif
 		BIO_set_fp(key,stdin,BIO_NOCLOSE);
 		}
@@ -1208,7 +1215,8 @@ STACK_OF(X509) *load_certs(BIO *err, const char *file, int format,
 	const char *pass, ENGINE *e, const char *desc)
 	{
 	STACK_OF(X509) *certs;
-	load_certs_crls(err, file, format, pass, e, desc, &certs, NULL);
+	if (!load_certs_crls(err, file, format, pass, e, desc, &certs, NULL))
+		return NULL;
 	return certs;
 	}	
 
@@ -1216,7 +1224,8 @@ STACK_OF(X509_CRL) *load_crls(BIO *err, const char *file, int format,
 	const char *pass, ENGINE *e, const char *desc)
 	{
 	STACK_OF(X509_CRL) *crls;
-	load_certs_crls(err, file, format, pass, e, desc, NULL, &crls);
+	if (!load_certs_crls(err, file, format, pass, e, desc, NULL, &crls))
+		return NULL;
 	return crls;
 	}	
 
@@ -3011,3 +3020,46 @@ int raw_write_stdout(const void *buf,int siz)
 int raw_write_stdout(const void *buf,int siz)
 	{	return write(fileno(stdout),buf,siz);	}
 #endif
+
+#if !defined(OPENSSL_NO_TLSEXT) && !defined(OPENSSL_NO_NEXTPROTONEG)
+/* next_protos_parse parses a comma separated list of strings into a string
+ * in a format suitable for passing to SSL_CTX_set_next_protos_advertised.
+ *   outlen: (output) set to the length of the resulting buffer on success.
+ *   in: a NUL termianted string like "abc,def,ghi"
+ *
+ *   returns: a malloced buffer or NULL on failure.
+ */
+unsigned char *next_protos_parse(unsigned short *outlen, const char *in)
+	{
+	size_t len;
+	unsigned char *out;
+	size_t i, start = 0;
+
+	len = strlen(in);
+	if (len >= 65535)
+		return NULL;
+
+	out = OPENSSL_malloc(strlen(in) + 1);
+	if (!out)
+		return NULL;
+
+	for (i = 0; i <= len; ++i)
+		{
+		if (i == len || in[i] == ',')
+			{
+			if (i - start > 255)
+				{
+				OPENSSL_free(out);
+				return NULL;
+				}
+			out[start] = i - start;
+			start = i + 1;
+			}
+		else
+			out[i+1] = in[i];
+		}
+
+	*outlen = len + 1;
+	return out;
+	}
+#endif  /* !OPENSSL_NO_TLSEXT && !OPENSSL_NO_NEXTPROTONEG */

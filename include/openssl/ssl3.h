@@ -389,6 +389,17 @@ typedef struct ssl3_buffer_st
 #define SSL3_FLAGS_POP_BUFFER			0x0004
 #define TLS1_FLAGS_TLS_PADDING_BUG		0x0008
 #define TLS1_FLAGS_SKIP_CERT_VERIFY		0x0010
+ 
+/* SSL3_FLAGS_SGC_RESTART_DONE is set when we
+ * restart a handshake because of MS SGC and so prevents us
+ * from restarting the handshake in a loop. It's reset on a
+ * renegotiation, so effectively limits the client to one restart
+ * per negotiation. This limits the possibility of a DDoS
+ * attack where the client handshakes in a loop using SGC to
+ * restart. Servers which permit renegotiation can still be
+ * effected, but we can't prevent that.
+ */
+#define SSL3_FLAGS_SGC_RESTART_DONE		0x0040
 
 typedef struct ssl3_state_st
 	{
@@ -464,6 +475,12 @@ typedef struct ssl3_state_st
 	size_t client_opaque_prf_input_len;
 	void *server_opaque_prf_input;
 	size_t server_opaque_prf_input_len;
+
+#ifndef OPENSSL_NO_NEXTPROTONEG
+	/* Set if we saw the Next Protocol Negotiation extension from
+	   our peer. */
+	int next_proto_neg_seen;
+#endif
 
 	struct	{
 		/* actually only needs to be 16+20 */
@@ -557,6 +574,10 @@ typedef struct ssl3_state_st
 #define SSL3_ST_CW_CERT_VRFY_B		(0x191|SSL_ST_CONNECT)
 #define SSL3_ST_CW_CHANGE_A		(0x1A0|SSL_ST_CONNECT)
 #define SSL3_ST_CW_CHANGE_B		(0x1A1|SSL_ST_CONNECT)
+#ifndef OPENSSL_NO_NEXTPROTONEG
+#define SSL3_ST_CW_NEXT_PROTO_A		(0x200|SSL_ST_CONNECT)
+#define SSL3_ST_CW_NEXT_PROTO_B		(0x201|SSL_ST_CONNECT)
+#endif
 #define SSL3_ST_CW_FINISHED_A		(0x1B0|SSL_ST_CONNECT)
 #define SSL3_ST_CW_FINISHED_B		(0x1B1|SSL_ST_CONNECT)
 /* read from server */
@@ -602,6 +623,10 @@ typedef struct ssl3_state_st
 #define SSL3_ST_SR_CERT_VRFY_B		(0x1A1|SSL_ST_ACCEPT)
 #define SSL3_ST_SR_CHANGE_A		(0x1B0|SSL_ST_ACCEPT)
 #define SSL3_ST_SR_CHANGE_B		(0x1B1|SSL_ST_ACCEPT)
+#ifndef OPENSSL_NO_NEXTPROTONEG
+#define SSL3_ST_SR_NEXT_PROTO_A		(0x210|SSL_ST_ACCEPT)
+#define SSL3_ST_SR_NEXT_PROTO_B		(0x211|SSL_ST_ACCEPT)
+#endif
 #define SSL3_ST_SR_FINISHED_A		(0x1C0|SSL_ST_ACCEPT)
 #define SSL3_ST_SR_FINISHED_B		(0x1C1|SSL_ST_ACCEPT)
 /* write to client */
@@ -626,6 +651,9 @@ typedef struct ssl3_state_st
 #define SSL3_MT_CLIENT_KEY_EXCHANGE		16
 #define SSL3_MT_FINISHED			20
 #define SSL3_MT_CERTIFICATE_STATUS		22
+#ifndef OPENSSL_NO_NEXTPROTONEG
+#define SSL3_MT_NEXT_PROTO			67
+#endif
 #define DTLS1_MT_HELLO_VERIFY_REQUEST    3
 
 

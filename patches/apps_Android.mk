@@ -1,9 +1,8 @@
 # Copyright 2006 The Android Open Source Project
 
 LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES:= \
+local_src_files:= \
 	app_rand.c \
 	apps.c \
 	asn1pars.c \
@@ -53,8 +52,6 @@ LOCAL_SRC_FILES:= \
 	version.c \
 	x509.c
 
-#   cms.c ec.c s_server.c
-
 LOCAL_SHARED_LIBRARIES := \
 	libsslx \
 	libcryptox
@@ -63,17 +60,24 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/.. \
 	$(LOCAL_PATH)/../include \
 
-LOCAL_CFLAGS := -DMONOLITH
+local_cflags := -DMONOLITH
 
-include $(LOCAL_PATH)/../android-config.mk
-
-# These flags omit whole features from the commandline "openssl".
-# However, portions of these features are actually turned on.
-LOCAL_CFLAGS += -DOPENSSL_NO_DTLS1
-
-
+include $(CLEAR_VARS)
 LOCAL_MODULE:= openssl
-
-LOCAL_MODULE_TAGS := tests
-
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := $(local_src_files)
+LOCAL_SHARED_LIBRARIES := $(local_shared_libraries)
+LOCAL_C_INCLUDES := $(local_c_includes)
+LOCAL_CFLAGS := $(local_cflags)
+include $(LOCAL_PATH)/../android-config.mk
 include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:= openssl
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := $(local_src_files)
+LOCAL_SHARED_LIBRARIES := $(local_shared_libraries)
+LOCAL_C_INCLUDES := $(local_c_includes)
+LOCAL_CFLAGS := $(local_cflags)
+include $(LOCAL_PATH)/../android-config.mk
+include $(BUILD_HOST_EXECUTABLE)

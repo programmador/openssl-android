@@ -944,6 +944,7 @@ void dtls1_get_ccs_header(unsigned char *data, struct ccs_header_st *ccs_hdr);
 void dtls1_reset_seq_numbers(SSL *s, int rw);
 long dtls1_default_timeout(void);
 struct timeval* dtls1_get_timeout(SSL *s, struct timeval* timeleft);
+int dtls1_check_timeout_num(SSL *s);
 int dtls1_handle_timeout(SSL *s);
 const SSL_CIPHER *dtls1_get_cipher(unsigned int u);
 void dtls1_start_timer(SSL *s);
@@ -951,6 +952,7 @@ void dtls1_stop_timer(SSL *s);
 int dtls1_is_timer_expired(SSL *s);
 void dtls1_double_timeout(SSL *s);
 int dtls1_send_newsession_ticket(SSL *s);
+unsigned int dtls1_min_mtu(void);
 
 /* some client-only functions */
 int ssl3_client_hello(SSL *s);
@@ -968,6 +970,9 @@ int ssl3_get_server_certificate(SSL *s);
 int ssl3_check_cert_and_algorithm(SSL *s);
 #ifndef OPENSSL_NO_TLSEXT
 int ssl3_check_finished(SSL *s);
+# ifndef OPENSSL_NO_NEXTPROTONEG
+int ssl3_send_next_proto(SSL *s);
+# endif
 #endif
 
 int dtls1_client_hello(SSL *s);
@@ -986,6 +991,9 @@ int ssl3_check_client_hello(SSL *s);
 int ssl3_get_client_certificate(SSL *s);
 int ssl3_get_client_key_exchange(SSL *s);
 int ssl3_get_cert_verify(SSL *s);
+#ifndef OPENSSL_NO_NEXTPROTONEG
+int ssl3_get_next_proto(SSL *s);
+#endif
 
 int dtls1_send_hello_request(SSL *s);
 int dtls1_send_server_hello(SSL *s);

@@ -133,6 +133,7 @@ local_src_files := \
 	bn/bn_add.c \
 	bn/bn_asm.c \
 	bn/bn_blind.c \
+	bn/bn_const.c \
 	bn/bn_ctx.c \
 	bn/bn_div.c \
 	bn/bn_err.c \
@@ -221,8 +222,6 @@ local_src_files := \
 	dso/dso_lib.c \
 	dso/dso_null.c \
 	dso/dso_openssl.c \
-	dso/dso_vms.c \
-	dso/dso_win32.c \
 	ec/ec2_mult.c \
 	ec/ec2_smpl.c \
 	ec/ec_ameth.c \
@@ -250,6 +249,28 @@ local_src_files := \
 	ecdsa/ecs_ossl.c \
 	ecdsa/ecs_sign.c \
 	ecdsa/ecs_vrf.c \
+	engine/eng_all.c \
+	engine/eng_cnf.c \
+	engine/eng_ctrl.c \
+	engine/eng_dyn.c \
+	engine/eng_err.c \
+	engine/eng_fat.c \
+	engine/eng_init.c \
+	engine/eng_lib.c \
+	engine/eng_list.c \
+	engine/eng_pkey.c \
+	engine/eng_table.c \
+	engine/tb_asnmth.c \
+	engine/tb_cipher.c \
+	engine/tb_dh.c \
+	engine/tb_digest.c \
+	engine/tb_dsa.c \
+	engine/tb_ecdh.c \
+	engine/tb_ecdsa.c \
+	engine/tb_pkmeth.c \
+	engine/tb_rand.c \
+	engine/tb_rsa.c \
+	engine/tb_store.c \
 	err/err.c \
 	err/err_all.c \
 	err/err_prn.c \
@@ -499,10 +520,15 @@ ifeq ($(DETECTED_PLATFORM),android-5)
 endif
 
 #######################################
-
-# target
+# target static library
 include $(CLEAR_VARS)
 include $(LOCAL_PATH)/../android-config.mk
+
+ifneq ($(TARGET_ARCH),x86)
+LOCAL_NDK_VERSION := 5
+LOCAL_SDK_VERSION := 9
+endif
+
 LOCAL_SRC_FILES += $(local_src_files)
 LOCAL_CFLAGS += $(local_c_flags)
 LOCAL_C_INCLUDES += $(local_c_includes)
